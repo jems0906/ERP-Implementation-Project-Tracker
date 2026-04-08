@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: erp-implementation-project-tracker
+    runtime: node
+    plan: free
+    autoDeploy: true
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: ERP_TRACKER_USERNAME
+        sync: false
+      - key: ERP_TRACKER_PASSWORD
+        sync: false

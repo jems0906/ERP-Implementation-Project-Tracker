@@ -67,6 +67,17 @@ This project is now cleaned for **local demo use**. It stores data in `data/stat
 
 Generated outbox files are disposable demo artifacts and can be deleted at any time.
 
+## Render deployment
+
+This repo again includes a minimal `render.yaml` so it can be deployed from a **Render Blueprint**.
+
+- Branch: `main`
+- Blueprint path: `render.yaml`
+- Build command: `npm install`
+- Start command: `npm start`
+
+Set `ERP_TRACKER_USERNAME` and `ERP_TRACKER_PASSWORD` in Render if you want custom login credentials.
+
 ## Files
 
 - `index.html` — app structure
