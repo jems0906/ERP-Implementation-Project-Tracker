@@ -1,0 +1,11 @@
+{
+  "name": "erp-implementation-project-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ERP implementation tracker in local demo mode",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "start:local": "powershell -ExecutionPolicy Bypass -File ./start-local.ps1"
+  }
+}

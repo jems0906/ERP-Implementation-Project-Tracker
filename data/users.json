@@ -1,0 +1,26 @@
+[
+  {
+    "username": "admin",
+    "password": "ERPTracker!2026",
+    "role": "admin",
+    "permissions": ["view_dashboard", "edit_project", "send_reports", "manage_users"]
+  },
+  {
+    "username": "pm",
+    "password": "ProjectLead!2026",
+    "role": "project-manager",
+    "permissions": ["view_dashboard", "edit_project", "send_reports"]
+  },
+  {
+    "username": "exec",
+    "password": "Executive!2026",
+    "role": "executive",
+    "permissions": ["view_dashboard", "send_reports"]
+  },
+  {
+    "username": "viewer",
+    "password": "Viewer!2026",
+    "role": "viewer",
+    "permissions": ["view_dashboard"]
+  }
+]

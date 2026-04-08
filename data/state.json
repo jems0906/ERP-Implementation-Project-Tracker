@@ -1,0 +1,28 @@
+{
+  "projectProfile": {
+    "clientName": "Contoso Manufacturing",
+    "siteName": "Plant 1",
+    "projectManager": "ERP Program Manager",
+    "targetGoLive": "2026-05-08",
+    "overallStatus": "On Track",
+    "budgetHealth": "92% plan consumed",
+    "executiveSummary": "Program is progressing through testing and change readiness with focus on cutover stability."
+  },
+  "emailAutomation": {
+    "recipients": "steering@example.com",
+    "cc": "pm@example.com",
+    "reportType": "executive",
+    "cadence": "Weekly",
+    "subject": "ERP Weekly Update",
+    "message": "Automated test email from the ERP tracker.",
+    "lastSentAt": "2026-04-08T18:44:03.815Z",
+    "lastDeliveryMode": "file-outbox"
+  },
+  "signedOff": {
+    "scope-signoff": true
+  },
+  "checklist": {},
+  "extraRisks": [],
+  "extraChangeRequests": [],
+  "extraActionItems": []
+}

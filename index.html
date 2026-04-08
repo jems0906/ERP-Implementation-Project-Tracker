@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ERP Implementation Project Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="authOverlay" class="auth-overlay hidden">
+    <div class="auth-card">
+      <p class="section-label">Secure access</p>
+      <h2>Sign in to the ERP tracker</h2>
+      <p class="helper-text">Use one of the demo accounts below, or type the credentials manually.</p>
+      <div class="demo-login-grid">
+        <button type="button" class="secondary-btn demo-login-btn" data-demo-user="admin" data-demo-password="ERPTracker!2026">Admin Demo</button>
+        <button type="button" class="secondary-btn demo-login-btn" data-demo-user="pm" data-demo-password="ProjectLead!2026">PM Demo</button>
+        <button type="button" class="secondary-btn demo-login-btn" data-demo-user="exec" data-demo-password="Executive!2026">Executive Demo</button>
+        <button type="button" class="secondary-btn demo-login-btn" data-demo-user="viewer" data-demo-password="Viewer!2026">Viewer Demo</button>
+      </div>
+      <div class="demo-credentials-list">
+        <span class="status-chip">admin / ERPTracker!2026</span>
+        <span class="status-chip">pm / ProjectLead!2026</span>
+        <span class="status-chip">exec / Executive!2026</span>
+        <span class="status-chip">viewer / Viewer!2026</span>
+      </div>
+      <form id="loginForm" class="request-form auth-form">
+        <input name="username" type="text" placeholder="Username" required />
+        <input id="loginPassword" name="password" type="password" placeholder="Password" required />
+        <label class="show-password-toggle">
+          <input id="showPasswordToggle" type="checkbox" />
+          Show password
+        </label>
+        <button type="submit" class="primary-btn">Sign In</button>
+      </form>
+      <p id="authMessage" class="auth-message"></p>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">SyteLine / CSI PMO Toolkit</p>
+        <h1>ERP Implementation Project Tracker</h1>
+        <p class="hero-copy">
+          A lightweight command center for manufacturing ERP rollouts with SyteLine-aligned phases,
+          KPI visibility, RACI ownership, risk control, and go-live readiness.
+        </p>
+        <div class="hero-actions">
+          <button id="copyExecutiveReport" class="primary-btn">Copy Executive Report</button>
+          <button id="copySteeringReport" class="secondary-btn">Copy Steering Report</button>
+          <button id="themeToggle" class="secondary-btn">Dark Mode</button>
+          <button id="exportExcelWorkbook" class="secondary-btn">Export Excel Workbook</button>
+          <button id="exportMilestonesCsv" class="secondary-btn">Export Milestones CSV</button>
+          <button id="exportRisksCsv" class="secondary-btn">Export Risks CSV</button>
+          <button id="downloadPdfReport" class="secondary-btn">Download PDF Report</button>
+          <button id="exportBackupJson" class="secondary-btn">Download Backup JSON</button>
+          <button id="logoutButton" class="secondary-btn">Sign Out</button>
+          <button id="resetTracker" class="secondary-btn danger-btn">Reset Tracker</button>
+        </div>
+        <div class="hero-meta">
+          <span id="storageMode" class="pill neutral">Storage: loading...</span>
+          <span id="authUser" class="pill neutral">User: loading...</span>
+        </div>
+        <nav class="quick-nav" aria-label="Dashboard sections">
+          <a class="nav-chip" href="#programSetup">Program Setup</a>
+          <a class="nav-chip" href="#phaseStatus">Phase Health</a>
+          <a class="nav-chip" href="#analyticsSection">Analytics</a>
+          <a class="nav-chip" href="#integrationSection">Readiness</a>
+          <a class="nav-chip" href="#governanceSection">Governance</a>
+          <a class="nav-chip" href="#reportingSection">Reporting</a>
+          <a class="nav-chip" href="#goliveSection">Go-Live</a>
+        </nav>
+        <div class="spotlight-grid">
+          <article class="spotlight-card">
+            <span class="spotlight-icon">🏭</span>
+            <div>
+              <strong>Manufacturing-first</strong>
+              <p>Track OTIF, inventory accuracy, cutover readiness, and plant-specific risks in one place.</p>
+            </div>
+          </article>
+          <article class="spotlight-card">
+            <span class="spotlight-icon">🧭</span>
+            <div>
+              <strong>Decision-ready governance</strong>
+              <p>See signoffs, change requests, and action items with clear ownership and status.</p>
+            </div>
+          </article>
+          <article class="spotlight-card">
+            <span class="spotlight-icon">📣</span>
+            <div>
+              <strong>Executive reporting</strong>
+              <p>Generate polished exports and keep steering stakeholders aligned every week.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+      <aside class="hero-summary card">
+        <h2>Program Snapshot</h2>
+        <ul id="snapshotList" class="snapshot-list"></ul>
+      </aside>
+    </header>
+
+    <main>
+      <section id="programSetup" class="card">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">Program setup</p>
+            <h2>Project Profile & Governance</h2>
+          </div>
+          <span id="profileHealth" class="pill neutral"></span>
+        </div>
+        <form id="projectProfileForm" class="request-form">
+          <div class="request-form-grid">
+            <input name="clientName" type="text" placeholder="Client name" required />
+            <input name="siteName" type="text" placeholder="Plant / site" required />
+          </div>
+          <div class="request-form-grid">
+            <input name="projectManager" type="text" placeholder="Project manager" required />
+            <input name="targetGoLive" type="date" aria-label="Target go-live date" required />
+          </div>
+          <div class="request-form-grid">
+            <select name="overallStatus" aria-label="Overall project status">
+              <option>On Track</option>
+              <option>Watch</option>
+              <option>Pending</option>
+              <option>Critical</option>
+            </select>
+            <input name="budgetHealth" type="text" placeholder="Budget health" required />
+          </div>
+          <textarea name="executiveSummary" rows="3" placeholder="Executive summary for steering reviews" required></textarea>
+          <button type="submit" class="primary-btn">Save Project Profile</button>
+        </form>
+      </section>
+
+      <section id="phaseStatus" class="grid two-column">
+        <article class="card">
+          <div class="section-heading">
+            <div>
+              <p class="section-label">Implementation lifecycle</p>
+              <h2>SyteLine Phase Tracker</h2>
+            </div>
+          </div>
+          <div id="phaseGrid" class="phase-grid"></div>
+        </article>
+
+        <article class="card">
+          <div class="section-heading">
+            <div>
+              <p class="section-label">Manufacturing pulse</p>
+              <h2>KPI Dashboard</h2>
+            </div>
+          </div>
+          <div id="kpiGrid" class="kpi-grid"></div>
+        </article>
+      </section>
+
+      <section id="analyticsSection" class="grid two-column">
+        <article class="card">
+          <div class="section-heading">
+            <div>
+              <p class="section-label">Portfolio analytics</p>
+              <h2>Charts & Trend Widgets</h2>
+            </div>
+          </div>
+          <div id="analyticsWidgets" class="analytics-grid"></div>
+        </article>
+
+        <article id="integrationSection" class="card">
+          <div class="section-heading">
+            <div>
+              <p class="section-label">Production readiness</p>
+              <h2>SQL / SMTP / Render Status</h2>
+            </div>
+            <span id="productionReadinessPill" class="pill neutral">Checking...</span>
+          </div>
+          <div id="integrationStatusGrid" class="integration-grid"></div>
+          <div class="hero-actions compact-actions">
+            <button id="checkSqlConnection" class="secondary-btn" type="button">Test SQL</button>
+            <button id="checkSmtpConnection" class="secondary-btn" type="button">Test SMTP</button>
+            <button id="checkRenderReadiness" class="secondary-btn" type="button">Check Render</button>
+          </div>
+          <p id="integrationStatusMessage" class="helper-text">Run a readiness check to confirm production setup.</p>
+        </article>
+      </section>
+
+      <section id="milestonesSection" class="card">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">Signoff management</p>
+            <h2>Milestone Tracker</h2>
+          </div>
+          <span id="signoffSummary" class="pill neutral"></span>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Milestone</th>
+                <th>Phase</th>
+                <th>Owner</th>
+                <th>Target Date</th>
+                <th>Status</th>
+                <th>Client Signoff</th>
+              </tr>
+            </thead>
+            <tbody id="milestoneTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="actionTrackerSection" class="card">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">Execution management</p>
+            <h2>Workstream Action Tracker</h2>
+          </div>
+          <span id="actionSummary" class="pill neutral"></span>
+        </div>
+        <div id="actionTrackerList" class="stack-list"></div>
+
+        <form id="actionItemForm" class="request-form">
+          <input name="title" type="text" placeholder="Action item title" required />
+          <textarea name="notes" rows="2" placeholder="Notes, dependencies, or expected outcome" required></textarea>
+          <div class="request-form-grid">
+            <input name="owner" type="text" placeholder="Owner" required />
+            <input name="dueDate" type="date" aria-label="Action item due date" required />
+          </div>
+          <div class="request-form-grid">
+            <select name="phase" aria-label="Action item phase">
+              <option>Discovery</option>
+              <option>Configuration/Data Migration</option>
+              <option>Testing</option>
+              <option>Training & Change</option>
+              <option>Go-Live / Hypercare</option>
+            </select>
+            <select name="status" aria-label="Action item status">
+              <option>On Track</option>
+              <option>Watch</option>
+              <option selected>Pending</option>
+              <option>Complete</option>
+            </select>
+          </div>
+          <button type="submit" class="primary-btn">Add Action Item</button>
+        </form>
+      </section>
+
+      <section id="governanceSection" class="grid two-column">
+        <article class="card">
+          <div class="section-heading">
+            <div>
+              <p class="section-label">Governance</p>
+              <h2>Risk Register</h2>
+            </div>
+            <label class="inline-filter">
+              Severity
+              <select id="riskFilter">
+                <option value="All">All</option>
+                <option value="Critical">Critical</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </label>
+          </div>
+          <div class="table-wrapper compact">
+            <table>
+              <thead>
+                <tr>
+                  <th>Risk</th>
+                  <th>Severity</th>
+                  <th>Owner</th>
+                  <th>Mitigation</th>
+                </tr>
+              </thead>
+              <tbody id="riskTableBody"></tbody>
+            </table>
+          </div>
+
+          <form id="riskForm" class="inline-form">
+            <input name="title" type="text" placeholder="Add manufacturing risk" required />
+            <select name="severity" aria-label="Risk severity">
+              <option>Critical</option>
+              <option>High</option>
+              <option selected>Medium</option>
+              <option>Low</option>
+            </select>
+            <input name="owner" type="text" placeholder="Owner" required />
+            <input name="mitigation" type="text" placeholder="Mitigation action" required />
+            <button type="submit" class="primary-btn">Add Risk</button>
+          </form>
+        </article>
+
+        <article class="card">
+          <div class="section-heading">
+            <div>
+              <p class="section-label">Change control</p>
+              <h2>Change Request Workflow</h2>
+            </div>
+          </div>
+          <div id="changeRequestList" class="stack-list"></div>
+
+          <form id="changeRequestForm" class="request-form">
+            <input name="title" type="text" placeholder="Change request title" required />
+            <textarea name="impact" rows="3" placeholder="Impact analysis: scope, timeline, cost, validation required" required></textarea>
+            <div class="request-form-grid">
+              <input name="requestor" type="text" placeholder="Requestor" required />
+              <select name="status" aria-label="Change request status">
+                <option>Assessment</option>
+                <option>Pending CAB</option>
+                <option>Approved</option>
+                <option>Rejected</option>
+              </select>
+            </div>
+            <button type="submit" class="primary-btn">Add Change Request</button>
+          </form>
+        </article>
+      </section>
+
+      <section id="raciSection" class="card">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">Responsibility model</p>
+            <h2>RACI Matrix for ERP Roles</h2>
+          </div>
+        </div>
+        <div class="table-wrapper wide-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Discovery</th>
+                <th>Configuration</th>
+                <th>Data Migration</th>
+                <th>Testing</th>
+                <th>Training</th>
+                <th>Go-Live</th>
+              </tr>
+            </thead>
+            <tbody id="raciTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="reportingSection" class="grid two-column">
+        <article class="card">
+          <div class="section-heading">
+            <div>
+              <p class="section-label">Validation assets</p>
+              <h2>SQL Query Library</h2>
+            </div>
+          </div>
+          <div id="queryLibrary" class="query-library"></div>
+        </article>
+
+        <article class="card">
+          <div class="section-heading">
+            <div>
+              <p class="section-label">Meeting readiness</p>
+              <h2>Workshop Agendas & Status Packs</h2>
+            </div>
+          </div>
+          <div id="agendaTemplates" class="agenda-list"></div>
+          <div class="report-preview">
+            <h3>Status Report Preview</h3>
+            <pre id="reportPreview"></pre>
+          </div>
+          <div class="automation-panel">
+            <h3>Email & Status Report Automation</h3>
+            <p class="helper-text">Configure recipients and send executive or steering updates through SMTP or the local outbox fallback.</p>
+            <form id="emailAutomationForm" class="request-form">
+              <input name="recipients" type="text" placeholder="To recipients (comma separated)" required />
+              <input name="cc" type="text" placeholder="CC recipients (optional)" />
+              <div class="request-form-grid">
+                <select name="reportType" aria-label="Email report type">
+                  <option value="executive">Executive</option>
+                  <option value="steering">Steering Committee</option>
+                </select>
+                <select name="cadence" aria-label="Email cadence">
+                  <option>Daily</option>
+                  <option selected>Weekly</option>
+                  <option>Biweekly</option>
+                  <option>Monthly</option>
+                </select>
+              </div>
+              <input name="subject" type="text" placeholder="Email subject" required />
+              <textarea name="message" rows="3" placeholder="Optional email introduction"></textarea>
+              <div class="hero-actions">
+                <button type="submit" class="primary-btn">Save Email Settings</button>
+                <button id="sendStatusEmail" type="button" class="secondary-btn">Send Status Email Now</button>
+              </div>
+            </form>
+            <p id="emailAutomationStatus" class="helper-text">No email has been sent in this session.</p>
+          </div>
+        </article>
+      </section>
+
+      <section id="goliveSection" class="grid two-column">
+        <article class="card">
+          <div class="section-heading">
+            <div>
+              <p class="section-label">Cutover readiness</p>
+              <h2>Go-Live Checklist</h2>
+            </div>
+            <span id="checklistSummary" class="pill neutral"></span>
+          </div>
+          <div id="goLiveChecklist" class="checklist"></div>
+        </article>
+
+        <article class="card">
+          <div class="section-heading">
+            <div>
+              <p class="section-label">Recovery planning</p>
+              <h2>Rollback Procedures</h2>
+            </div>
+          </div>
+          <ol class="rollback-list">
+            <li>Stop outbound integrations and freeze transactional posting.</li>
+            <li>Restore pre-cutover SyteLine database backup and validate row counts.</li>
+            <li>Re-enable legacy MRP scheduling and shipping labels.</li>
+            <li>Communicate rollback decision to steering committee and plant leadership.</li>
+            <li>Log defects, root cause, and required remediations before rescheduling cutover.</li>
+          </ol>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
